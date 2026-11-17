@@ -1,0 +1,49 @@
+name: Golo a Vista
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Só enviar notificação de teste"
+        type: boolean
+        default: false
+
+concurrency:
+  group: golo-a-vista
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restaurar estado
+        uses: actions/cache@v4
+        with:
+          path: state
+          key: state-${{ github.run_id }}
+          restore-keys: |
+            state-
+
+      - name: Executar monitor
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          THRESHOLD: ${{ vars.THRESHOLD }}
+          COOLDOWN_MIN: ${{ vars.COOLDOWN_MIN }}
+          MAX_FIXTURES_PER_RUN: ${{ vars.MAX_FIXTURES_PER_RUN }}
+          DAILY_REQUEST_BUDGET: ${{ vars.DAILY_REQUEST_BUDGET }}
+          LEAGUE_IDS: ${{ vars.LEAGUE_IDS }}
+          QUIET_START: ${{ vars.QUIET_START }}
+          QUIET_END: ${{ vars.QUIET_END }}
+        run: python monitor.py ${{ inputs.test && '--test' || '' }}
