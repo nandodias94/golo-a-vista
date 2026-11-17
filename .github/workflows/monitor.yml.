@@ -47,3 +47,4 @@ jobs:
           QUIET_START: ${{ vars.QUIET_START }}
           QUIET_END: ${{ vars.QUIET_END }}
         run: python monitor.py ${{ inputs.test && '--test' || '' }}
+
