@@ -1,0 +1,11 @@
+name: Teste
+
+on:
+  workflow_dispatch:
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirmar
+        run: echo "Workflow a funcionar"
