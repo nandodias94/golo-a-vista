@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Confirmar
-        run: echo "Workflow a funcionar"
+        run: echo "Teste a funcionar"
